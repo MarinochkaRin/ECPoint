@@ -91,20 +91,26 @@ class ECPoint:
         print(ECPoint.ECPointToString(point))
 
 
-
 if __name__ == "__main__":
     test_curve = EllipticCurve(-7, 10)
     print('Curve: y^2 = x^3 - 7*x + 10 (R)\n')
 
+    # Отримуємо базову точку G та підгрупу
     _g, _subgroup = ECPoint.BasePointGGet(10, curve=test_curve)
     print(f'Base point - {_g} \nSubgroup: {_subgroup}\n')
 
-    print(f'(1, 2) + (3, 4) = {ECPoint.AddECPoints(Point(1,2), Point(3,4))}\n')
-    
-    print(f'Double (1, 2) = {ECPoint.DoubleECPoints(Point(1, 2), curve=test_curve)}\n')
+    # Генеруємо випадкові значення k та d
+    k = random.randint(1, 1000)
+    d = random.randint(1, 1000)
 
-    print(f'5 * (1, 2) = {ECPoint.ScalarMult(Point(1, 2), 5, curve=test_curve)}\n')
+    # Обчислюємо H1 = d*G та H2 = k*(d*G)
+    H1 = ECPoint.ScalarMult(_g, d, curve=test_curve)
+    H2 = ECPoint.ScalarMult(H1, k, curve=test_curve)
 
-    test_point = ECPoint.ECPointGen(1, 2)
-    print(f'Gen point (1, 2) -> {test_point}\n')
-    ECPoint.PrintECPoint(test_point)
+    # Обчислюємо H3 = k*G та H4 = d*(k*G)
+    H3 = ECPoint.ScalarMult(_g, k, curve=test_curve)
+    H4 = ECPoint.ScalarMult(H3, d, curve=test_curve)
+
+    # Перевіряємо, чи H2 = H4
+    result = H2.x == H4.x and H2.y == H4.y
+    print(f'Result: {result}')
