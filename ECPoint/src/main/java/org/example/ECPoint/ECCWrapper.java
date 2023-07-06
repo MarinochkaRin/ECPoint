@@ -12,6 +12,16 @@ import org.bouncycastle.crypto.params.ECPublicKeyParameters;
 import org.bouncycastle.math.ec.ECPoint;
 import org.bouncycastle.util.encoders.Hex;
 
+
+
+import java.math.BigInteger;
+import java.security.SecureRandom;
+import org.bouncycastle.asn1.x9.X9ECParameters;
+import org.bouncycastle.crypto.ec.CustomNamedCurves;
+import org.bouncycastle.crypto.params.ECDomainParameters;
+import org.bouncycastle.math.ec.ECPoint;
+import org.bouncycastle.util.encoders.Hex;
+
 public class ECCWrapper {
     private static final SecureRandom random = new SecureRandom();
     public static final X9ECParameters curveParams = CustomNamedCurves.getByName("secp256k1");
@@ -20,17 +30,15 @@ public class ECCWrapper {
     public static ECPoint basePointGGet() {
         return domainParams.getG();
     }
+
     public static BigInteger generateSharedSecret(BigInteger privateKey, ECPoint publicKey) {
         ECPoint sharedPoint = scalarMult(privateKey, publicKey);
         BigInteger sharedSecret = sharedPoint.getXCoord().toBigInteger();
         return sharedSecret;
     }
+
     public static ECPoint ecPointGen(BigInteger x, BigInteger y) {
         return curveParams.getCurve().createPoint(x, y);
-    }
-
-    public static boolean isOnCurveCheck(ECPoint point) {
-        return point.isValid();
     }
 
     public static ECPoint addECPoints(ECPoint a, ECPoint b) {
@@ -68,6 +76,8 @@ public class ECCWrapper {
         random.nextBytes(bytes);
         return new BigInteger(1, bytes);
     }
+
+
 
     public static void main(String[] args) {
         ECPoint G = basePointGGet();
